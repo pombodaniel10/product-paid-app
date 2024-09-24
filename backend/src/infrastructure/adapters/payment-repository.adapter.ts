@@ -1,16 +1,30 @@
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 import { PaymentInterface } from '../../application/ports/payment.interface';
 import { CustomerInfoDTO } from 'src/application/ports/dtos/customer-info.dto';
 import { WompiResponseDTO } from 'src/application/ports/dtos/wompi-response.dto';
 import * as crypto from 'crypto';
 
 export class PaymentRepositoryAdapter implements PaymentInterface {
-  private readonly WOMPI_API_URL = '';
-  private readonly WOMPI_PUBLIC_KEY = '';
-  private readonly WOMPI_PRIVATE_KEY = '';
-  private readonly WOMPI_INTEGRITY_KEY = '';
+  private readonly WOMPI_API_URL = process.env.WOMPI_API_URL;
+  private readonly WOMPI_PUBLIC_KEY = process.env.WOMPI_PUBLIC_KEY;
+  private readonly WOMPI_PRIVATE_KEY = process.env.WOMPI_PRIVATE_KEY;
+  private readonly WOMPI_INTEGRITY_KEY = process.env.WOMPI_INTEGRITY_KEY;
 
-
+  async getPayment(paymentId: string): Promise<any | null> {
+    const url = `${this.WOMPI_API_URL}transactions/${paymentId}`;
+    try {
+      const response = await axios.get(url,{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.WOMPI_PUBLIC_KEY}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw new Error('Failed to fetch acceptance token: ' + error.message);
+    }
+  }
 
   async checkInfo(customerInfo: CustomerInfoDTO): Promise<WompiResponseDTO> {
     try {
@@ -23,49 +37,47 @@ export class PaymentRepositoryAdapter implements PaymentInterface {
     }
   }
 
-  async requestPayment(customerInfo: CustomerInfoDTO): Promise<WompiResponseDTO> {
+  async requestPayment(customerInfo: CustomerInfoDTO): Promise<WompiResponseDTO | any> {
     try {
       const acceptanceToken = await this.getAcceptanceToken();
-      const signature = this.generateSignature('12121212',200000);
-      const response = await axios.post(`${this.WOMPI_API_URL}transactions`, {
-        acceptance_token: acceptanceToken,
-        amount_in_cents: "300000",
-        signature,
-        customerEmail: 'sdsdsd@.com',
-        paymentMethod: {
+      const reference = uuidv4();
+      const amount_in_cents = this.convertToCents(customerInfo.amount);
+      const signature = this.generateSignature(reference,amount_in_cents);
+      const paymentData = {
+        amount_in_cents,
+        currency:  'COP',
+        customer_email: 'customer@test.com', // Puedes cambiar esto por el email real del cliente
+        payment_method: {
           type: 'CARD',
-          token: customerInfo.card_token,
-          installments: 1
+          installments: 1,
+          token: customerInfo.card_token
         },
-        currency: 'COP',
-        redirect_url: null,
-        reference: 'askasn123813n',
+        reference,
+        acceptance_token: acceptanceToken,
+        signature: signature,
         customer_data: {
-          full_name: 'Maximo'
-        },
-        shipping_address: {
-          address_line_1: 'cerquita a la casa',
-          country: 'colombia',
-          region: 'bol',
-          city: 'cartagena',
-          phone_number: '573001234567'
+          full_name: customerInfo.card_holder
         }
-      }, {
+      };
+
+      const response = await axios.post(`${this.WOMPI_API_URL}transactions`,paymentData, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.WOMPI_PUBLIC_KEY}`,
+          'Authorization': `Bearer ${this.WOMPI_PRIVATE_KEY}`,
         },
       });
 
       return this.parseWompiResponse(response.data);
     } catch (error) {
-      console.error('Error requesting payment:', error);
+      if(error.response.status === 422){
+      return { error: error.response.data.error.messages };
+      }
       throw new Error('Payment failed');
     }
   }
 
   private async getAcceptanceToken(): Promise<string> {
-    const url = `${this.WOMPI_API_URL}merchants/pub_stagtest_g2u0HQd3ZMh05hsSgTS2lUV8t3s4mOt7`;
+    const url = `${this.WOMPI_API_URL}merchants/${this.WOMPI_PUBLIC_KEY}`;
     try {
       const response = await axios.get(url);
       const acceptanceToken = response.data.data.presigned_acceptance.acceptance_token;
@@ -76,11 +88,11 @@ export class PaymentRepositoryAdapter implements PaymentInterface {
   }
 
   private generateSignature(
-    transactionId: string,
-    amountInCents: number,
+    reference: string,
+    amount_in_cents: number,
     currency: string = 'COP',
   ): string {
-    const dataToSign = `${transactionId}${amountInCents}${currency}${this.WOMPI_INTEGRITY_KEY}`;
+    const dataToSign = `${reference}${amount_in_cents}${currency}${this.WOMPI_INTEGRITY_KEY}`;
     const hash = crypto.createHash('sha256').update(dataToSign).digest('hex');
     return hash;
   }

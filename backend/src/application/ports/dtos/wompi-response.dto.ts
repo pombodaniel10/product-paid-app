@@ -6,5 +6,6 @@ export class WompiResponseDTO {
     paymentMethodType: string;
     createdAt: string;
     updatedAt: string;
+    error?: any;
   }
   

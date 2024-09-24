@@ -3,6 +3,8 @@ import { Payment } from './payment.controller';
 import { PaymentRepositoryAdapter } from '../adapters/payment-repository.adapter';
 import { CheckInfo } from 'src/application/logic/check-info';
 import { RequestPayment } from 'src/application/logic/request-transaction';
+import { GetPayment } from 'src/application/logic/get-transaction';
+
 
 @Module({
   controllers: [Payment],
@@ -12,7 +14,8 @@ import { RequestPayment } from 'src/application/logic/request-transaction';
       useClass: PaymentRepositoryAdapter,
     },
     CheckInfo,
-    RequestPayment
+    RequestPayment,
+    GetPayment
   ],
 })
 export class PaymentModule {}
