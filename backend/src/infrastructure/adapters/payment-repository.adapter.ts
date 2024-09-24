@@ -5,10 +5,10 @@ import { WompiResponseDTO } from 'src/application/ports/dtos/wompi-response.dto'
 import * as crypto from 'crypto';
 
 export class PaymentRepositoryAdapter implements PaymentInterface {
-  private readonly WOMPI_API_URL = 'https://api-sandbox.co.uat.wompi.dev/v1/';
-  private readonly WOMPI_PUBLIC_KEY = 'pub_stagtest_g2u0HQd3ZMh05hsSgTS2lUV8t3s4mOt7';
-  private readonly WOMPI_PRIVATE_KEY = 'prv_stagtest_5i0ZGIGiFcDQifYsXxvsny7Y37tKqFWg';
-  private readonly WOMPI_INTEGRITY_KEY = 'stagtest_integrity_nAIBuqayW70XpUqJS4qf4STYiISd89Fp';
+  private readonly WOMPI_API_URL = '';
+  private readonly WOMPI_PUBLIC_KEY = '';
+  private readonly WOMPI_PRIVATE_KEY = '';
+  private readonly WOMPI_INTEGRITY_KEY = '';
 
 
 
@@ -31,7 +31,7 @@ export class PaymentRepositoryAdapter implements PaymentInterface {
         acceptance_token: acceptanceToken,
         amount_in_cents: "300000",
         signature,
-        customerEmail: 'sdsdsd@example.com',
+        customerEmail: 'sdsdsd@.com',
         paymentMethod: {
           type: 'CARD',
           token: customerInfo.card_token,
