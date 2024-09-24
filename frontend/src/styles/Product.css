@@ -1,0 +1,14 @@
+.product-container {
+    text-align: center;
+}
+  
+.product-price {
+    font-size: 24px;
+    color: #ff4500;
+}
+  
+.quantity-input {
+    width: 60px;
+    text-align: center;
+    margin: 10px 0;
+}  

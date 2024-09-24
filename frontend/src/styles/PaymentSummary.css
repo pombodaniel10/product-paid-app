@@ -1,0 +1,19 @@
+.summary-container {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+  }
+  
+  .summary-total {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff4500;
+  }
+  
