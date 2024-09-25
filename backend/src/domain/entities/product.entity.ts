@@ -2,6 +2,7 @@ export class Product {
     constructor(
       public readonly id: string,  // ID del producto
       public readonly name: string, // Nombre del producto
+      public readonly image: string, // url imagen del producto
       public stock: number,         // Unidades en stock
       public readonly price: number // Precio del producto
     ) {}
