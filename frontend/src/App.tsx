@@ -7,7 +7,8 @@ import { Product, PaymentInfo } from './types';
 
 const App: React.FC = () => {
   const [selectedProduct] = useState<Product>({
-    id: 1,
+    id: '2',
+    image: 'https://m.media-amazon.com/images/I/71TCyb382zL.jpg',
     name: 'Cool Gadget',
     description: 'This is a cool gadget.',
     price: 100,
@@ -55,7 +56,7 @@ const App: React.FC = () => {
           onConfirmPayment={handleConfirmPayment}
         />
       ) : (
-        <ProductPage product={selectedProduct} onPayClick={handlePayClick} />
+        <ProductPage productId={selectedProduct.id} onPayClick={handlePayClick} />
       )}
 
       <PaymentModal
