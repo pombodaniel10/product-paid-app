@@ -1,30 +1,39 @@
 import React from 'react';
 import { Product } from '../types';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
 import { requestTransaction } from '../store/slices/payment';
 import '../styles/PaymentSummary.css';
-import { PaymentMethod } from '../types';
 
 interface PaymentSummaryProps {
   product: Product;
   quantity: number;
   baseFee: number;
   deliveryFee: number;
-  paymentMethod: PaymentMethod | null;
+  paymentMethod: any | null;
   onConfirmPayment: (transactionRequest: any) => void;
 }
 
 const PaymentSummary: React.FC<PaymentSummaryProps> = ({ product, quantity, baseFee, deliveryFee, paymentMethod, onConfirmPayment }) => {
   const dispatch: AppDispatch = useDispatch();
+  const { transaction } = useSelector((state: RootState) => state.payment);
+
 
   const productTotal = product.price * quantity;
   const total = productTotal + baseFee + deliveryFee;
+  console.log('paymentMethod', paymentMethod);
+  const paymentPayload = {
+    card_holder: paymentMethod?.card_holder,
+    token: paymentMethod?.card_token,
+    amount: total,
+    product_id: product.id,
+    customer_id: paymentMethod?.customerId,
+    installments: 1,
+  };
 
   const handleConfirmPayment = async () => {
-    const transactionRequest = requestTransaction(paymentMethod);
-    await dispatch(requestTransaction(paymentMethod));
-    onConfirmPayment(transactionRequest);
+    await dispatch(requestTransaction(paymentPayload));
+    onConfirmPayment(transaction);
   };
 
   return (

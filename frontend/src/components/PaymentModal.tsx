@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../store/store';
 import { checkPaymentInfo } from '../store/slices/payment';
 import '../styles/PaymentModal.css';
-import { PaymentMethod } from '../types';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -18,7 +17,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onSubmit, onClose }
   const [expirationDate, setExpirationDate] = useState('');
   const [cvv, setCvv] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
-  const { paymentMethod, transaction, loading, error } = useSelector((state: RootState) => state.payment);
+  const [country, setCountry] = useState('');
+  const [city, setCity] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const { paymentMethod } = useSelector((state: RootState) => state.payment);
 
 
   const handleSubmit = async () => {
@@ -28,7 +31,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onSubmit, onClose }
       exp_month: expirationDate.split('/')[0],
       exp_year: expirationDate.split('/')[1],
       cvc: cvv,
-      deliveryAddress,
+      address: deliveryAddress,
+      country,
+      city,
+      email,
+      phoneNumber,
     };
 
     try {
@@ -74,6 +81,30 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onSubmit, onClose }
         placeholder="Delivery Address"
         value={deliveryAddress}
         onChange={(e) => setDeliveryAddress(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Country"
+        value={country}
+        onChange={(e) => setCountry(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="City"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Phone Number"
+        value={phoneNumber}
+        onChange={(e) => setPhoneNumber(e.target.value)}
       />
       <button onClick={handleSubmit}>Add payment method</button>
     </div>

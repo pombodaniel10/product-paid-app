@@ -3,11 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProduct } from '../store/slices/product';
 import { RootState, AppDispatch } from '../store/store';
 import '../styles/Product.css';
-import { Product } from '../types';
 
 interface ProductPageProps {
   productId: number;
-  onPayClick: (product: Product, quantity: number) => void;
+  onPayClick: (quantity: number) => void;
 }
 
 const ProductPage: React.FC<ProductPageProps> = ({ productId, onPayClick }) => {
@@ -55,7 +54,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId, onPayClick }) => {
               max={product.stock} 
               onChange={handleQuantityChange} 
             />
-            <button onClick={() => onPayClick(product, quantity)}>Pay with Credit Card</button>
+            <button onClick={() => onPayClick(quantity)}>Pay with Credit Card</button>
           </div>
         </>
       )}

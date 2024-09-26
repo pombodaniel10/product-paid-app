@@ -23,7 +23,7 @@ export const requestPayment = async (paymentMethod: PaymentMethod) => {
 
 export const getTransaction = async (transactionId: string) => {
   try {
-    const response = await axios.get(`http://localhost:3001/payments/transaction/${transactionId}`);
+    const response = await axios.get(`http://localhost:3001/payments/${transactionId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching transaction:', error);

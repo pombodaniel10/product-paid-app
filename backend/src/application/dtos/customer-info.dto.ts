@@ -5,13 +5,11 @@ export class CustomerInfoDTO {
     exp_year: string;
     card_holder: string;
     email: string;
+    phone_number: string;
     address: string;
     city: string;
     country: string;
-    postalCode: string;
-    amount: number;
-    transactionReference: string;
-    card_token?: string; // Este se llenará tras tokenizar la tarjeta
+    card_token?: string; 
     customerId?: number;
     productId?: number;
   }

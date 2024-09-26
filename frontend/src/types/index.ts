@@ -10,6 +10,7 @@ export interface Product {
 export interface Transaction {
     id: string;
     product: Product;
+    transaction_id: string;
     status: 'SUCCESS' | 'FAILED';
     amount: number;
     baseFee: number;
@@ -27,7 +28,7 @@ export interface CustomerInfo {
 
 export interface PaymentMethod {
     card_holder: string;
-    token: string;
-    amount: number;
+    card_token: string;
+    customerId: number;
 }
   

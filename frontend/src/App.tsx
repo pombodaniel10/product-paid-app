@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import ProductPage from './components/Product';
 import PaymentModal from './components/PaymentModal';
+import { useSelector } from 'react-redux';
+import { RootState } from './store/store';
 import PaymentSummary from './components/PaymentSummary';
 import TransactionResult from './components/TransactionResult';
-import { Product, PaymentMethod, Transaction } from './types';
+import { Product } from './types';
 
 const App: React.FC = () => {
   const [selectedProduct] = useState<Product>({
@@ -16,26 +18,26 @@ const App: React.FC = () => {
   });
 
   const [quantity, setQuantity] = useState<number>(1);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [transactionStatus, setTransactionStatus] = useState<'SUCCESS' | 'FAILED' | 'PENDING' | null>(null);
   const [transactionId, setTransactionId] = useState<string | null>(null);
-
+  const { paymentMethod, transaction } = useSelector((state: RootState) => state.payment);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSummaryVisible, setSummaryVisible] = useState(false);
 
-  const handlePayClick = (product: Product, quantity: number) => {
+  const handlePayClick = (quantity: number) => {
     setQuantity(quantity);
     setModalOpen(true);
   };
 
-  const handlePaymentSubmit = (data: PaymentMethod) => {
-    setPaymentMethod(data);
+  const handlePaymentSubmit = () => {
     setSummaryVisible(true);
   };
 
-  const handleConfirmPayment = (transactionRequest: Transaction) => {
-    setTransactionId(transactionRequest.id);
-    setTransactionStatus('PENDING');
+  const handleConfirmPayment = () => {
+      if (transaction) {
+        setTransactionId(transaction.transaction_id);
+      }
+      setTransactionStatus('PENDING');
   };
 
   const handleReturnToProductPage = () => {
@@ -45,9 +47,9 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {transactionStatus && transactionId ? (
+      {transactionStatus && transaction && transactionId ? (
         <TransactionResult transactionId={transactionId} status={transactionStatus} onReturn={handleReturnToProductPage} />
-      ) : isSummaryVisible && paymentMethod ? (
+      ) : isSummaryVisible ? (
         <PaymentSummary
           product={selectedProduct}
           quantity={quantity}

@@ -166,7 +166,7 @@ export class PaymentRepository {
       newCustomer.address = customerInfo.address;
       newCustomer.city = customerInfo.city;
       newCustomer.country = customerInfo.country;
-      newCustomer.phone_number = customerInfo.number;
+      newCustomer.phone_number = customerInfo.phone_number;
       _customer = await this.customerRepository.create(newCustomer);
     }
 
