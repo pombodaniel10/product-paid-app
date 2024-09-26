@@ -6,7 +6,7 @@ import '../styles/Product.css';
 import { Product } from '../types';
 
 interface ProductPageProps {
-  productId: string;
+  productId: number;
   onPayClick: (product: Product, quantity: number) => void;
 }
 

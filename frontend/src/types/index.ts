@@ -1,5 +1,5 @@
 export interface Product {
-    id: string;
+    id: number;
     image: string;
     name: string;
     description: string;
@@ -16,10 +16,18 @@ export interface Transaction {
     deliveryFee: number;
   }
   
-export interface PaymentInfo {
-    cardNumber: string;
-    expirationDate: string;
-    cvv: string;
+export interface CustomerInfo {
+    number: string;
+    exp_month: string;
+    exp_year: string;
+    cvc: string;
+    card_holder: string;
     deliveryAddress: string;
   }
+
+export interface PaymentMethod {
+    card_holder: string;
+    token: string;
+    amount: number;
+}
   

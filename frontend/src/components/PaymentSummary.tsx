@@ -1,18 +1,31 @@
 import React from 'react';
 import { Product } from '../types';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../store/store';
+import { requestTransaction } from '../store/slices/payment';
 import '../styles/PaymentSummary.css';
+import { PaymentMethod } from '../types';
 
 interface PaymentSummaryProps {
   product: Product;
   quantity: number;
   baseFee: number;
   deliveryFee: number;
-  onConfirmPayment: () => void;
+  paymentMethod: PaymentMethod | null;
+  onConfirmPayment: (transactionRequest: any) => void;
 }
 
-const PaymentSummary: React.FC<PaymentSummaryProps> = ({ product, quantity, baseFee, deliveryFee, onConfirmPayment }) => {
+const PaymentSummary: React.FC<PaymentSummaryProps> = ({ product, quantity, baseFee, deliveryFee, paymentMethod, onConfirmPayment }) => {
+  const dispatch: AppDispatch = useDispatch();
+
   const productTotal = product.price * quantity;
   const total = productTotal + baseFee + deliveryFee;
+
+  const handleConfirmPayment = async () => {
+    const transactionRequest = requestTransaction(paymentMethod);
+    await dispatch(requestTransaction(paymentMethod));
+    onConfirmPayment(transactionRequest);
+  };
 
   return (
     <div className="container summary-container">
@@ -41,7 +54,7 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({ product, quantity, base
         <p>Total:</p>
         <p>${total.toFixed(2)}</p>
       </div>
-      <button onClick={onConfirmPayment}>Confirm Payment</button>
+      <button onClick={handleConfirmPayment}>Confirm Payment</button>
     </div>
   );
 };

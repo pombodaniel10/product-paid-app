@@ -16,7 +16,7 @@ const initialState: ProductState = {
 // Thunk para obtener el producto
 export const fetchProduct = createAsyncThunk(
   'product/fetchProduct',
-  async (productId: string) => {
+  async (productId: number) => {
     const response = await getProduct(productId);
     return response;
   }

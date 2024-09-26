@@ -7,8 +7,11 @@ export class CustomerInfoDTO {
     email: string;
     address: string;
     city: string;
+    country: string;
     postalCode: string;
     amount: number;
     transactionReference: string;
     card_token?: string; // Este se llenará tras tokenizar la tarjeta
+    customerId?: number;
+    productId?: number;
   }

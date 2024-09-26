@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const getProduct = async (productId: string) => {
+export const getProduct = async (productId: number) => {
   try {
     const response = await axios.get(`http://localhost:3001/products/${productId}`);
     return response.data;

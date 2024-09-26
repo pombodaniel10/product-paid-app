@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
-import { Product } from './product.controller';
-import { ProductRepositoryAdapter } from '../adapters/product-repository.adapter';
-import { GetProduct } from '../../application/logic/get-product';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductController } from './product.controller';
+import { ProductService } from './product.service';
+import { ProductRepository } from './product.repository';
+import { Product } from '../../domain/entities/product.entity';
 
 @Module({
-  controllers: [Product],
-  providers: [
-    {
-      provide: 'ProductInterface',
-      useClass: ProductRepositoryAdapter,
-    },
-    GetProduct,
-  ],
+  imports: [TypeOrmModule.forFeature([Product])],
+  controllers: [ProductController],
+  providers: [ProductService, ProductRepository],
+  exports: [ProductService, ProductRepository],
 })
 export class ProductModule {}

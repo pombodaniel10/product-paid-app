@@ -1,30 +1,26 @@
 import { Body, Param, Controller, Get, Post } from '@nestjs/common';
-import { CheckInfo } from 'src/application/logic/check-info';
-import { RequestPayment } from 'src/application/logic/request-transaction';
-import { GetPayment } from 'src/application/logic/get-transaction';
-import { CustomerInfoDTO } from 'src/application/ports/dtos/customer-info.dto';
-import { WompiResponseDTO } from 'src/application/ports/dtos/wompi-response.dto';
+import { PaymentService } from './payment.service';
+import { CustomerInfoDTO } from 'src/application/dtos/customer-info.dto';
+import { WompiResponseDTO } from 'src/application/dtos/wompi-response.dto';
 
 @Controller('payments')
-export class Payment {
+export class PaymentController {
   constructor(
-    private readonly checkInfoUseCase: CheckInfo,
-    private readonly requestPaymentUseCase: RequestPayment,
-    private readonly getPaymentUseCase: GetPayment,
+    private readonly paymentService: PaymentService,
   ) {}
 
   @Post('check-info')
-  async checkInfo(@Body() customerInfo: CustomerInfoDTO): Promise<WompiResponseDTO> {
-    return this.checkInfoUseCase.execute(customerInfo);
+  async checkInfo(@Body() customerInfo: CustomerInfoDTO): Promise<any> {
+    return await this.paymentService.checkInfo(customerInfo);
   }
 
   @Post('request-payment')
   async requestPayment(@Body() customerInfo: CustomerInfoDTO): Promise<WompiResponseDTO> {
-    return this.requestPaymentUseCase.execute(customerInfo);
+    return this.paymentService.requestPayment(customerInfo);
   }
 
   @Get(':id')
   async getTransaction(@Param('id') id: string): Promise<any | null> {
-    return this.getPaymentUseCase.execute(id);
+    return this.paymentService.getPayment(id);
   }
 }

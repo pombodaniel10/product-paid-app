@@ -3,21 +3,22 @@ import ProductPage from './components/Product';
 import PaymentModal from './components/PaymentModal';
 import PaymentSummary from './components/PaymentSummary';
 import TransactionResult from './components/TransactionResult';
-import { Product, PaymentInfo } from './types';
+import { Product, PaymentMethod, Transaction } from './types';
 
 const App: React.FC = () => {
   const [selectedProduct] = useState<Product>({
-    id: '2',
+    id: 2,
     image: 'https://m.media-amazon.com/images/I/71TCyb382zL.jpg',
     name: 'Cool Gadget',
     description: 'This is a cool gadget.',
-    price: 100,
+    price: 100000,
     stock: 20,
   });
 
   const [quantity, setQuantity] = useState<number>(1);
-  const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
-  const [transactionStatus, setTransactionStatus] = useState<'SUCCESS' | 'FAILED' | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [transactionStatus, setTransactionStatus] = useState<'SUCCESS' | 'FAILED' | 'PENDING' | null>(null);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [isSummaryVisible, setSummaryVisible] = useState(false);
@@ -27,15 +28,14 @@ const App: React.FC = () => {
     setModalOpen(true);
   };
 
-  const handlePaymentSubmit = (info: PaymentInfo) => {
-    setPaymentInfo(info);
+  const handlePaymentSubmit = (data: PaymentMethod) => {
+    setPaymentMethod(data);
     setSummaryVisible(true);
   };
 
-  const handleConfirmPayment = () => {
-    // Simula llamada a backend para procesar pago
-    const isSuccess = Math.random() > 0.5;  // Simula un resultado de pago aleatorio
-    setTransactionStatus(isSuccess ? 'SUCCESS' : 'FAILED');
+  const handleConfirmPayment = (transactionRequest: Transaction) => {
+    setTransactionId(transactionRequest.id);
+    setTransactionStatus('PENDING');
   };
 
   const handleReturnToProductPage = () => {
@@ -45,14 +45,15 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {transactionStatus ? (
-        <TransactionResult status={transactionStatus} onReturn={handleReturnToProductPage} />
-      ) : isSummaryVisible && paymentInfo ? (
+      {transactionStatus && transactionId ? (
+        <TransactionResult transactionId={transactionId} status={transactionStatus} onReturn={handleReturnToProductPage} />
+      ) : isSummaryVisible && paymentMethod ? (
         <PaymentSummary
           product={selectedProduct}
           quantity={quantity}
-          baseFee={5.00}
-          deliveryFee={10.00}
+          baseFee={selectedProduct.price * 0.19}
+          deliveryFee={10000.00}
+          paymentMethod={paymentMethod}
           onConfirmPayment={handleConfirmPayment}
         />
       ) : (
